@@ -7,24 +7,40 @@
 
 @if (topJokes == null)
 {
-    <p><em>Loading...</em></p>
+    <div class="text-center p-3">
+        <span class="spinner-border text-primary" role="status"></span>
+        <p>Loading top jokes, please wait...</p>
+    </div>
 }
 else if (topJokes.Count == 0)
 {
-    <p>No jokes to display.</p>
+    <p>No jokes have been rated yet.</p>
 }
 else
 {
-    <ul>
-        @foreach (var joke in topJokes)
-        {
-            <li>
-                <p>@joke.Setup</p>
-                <p>@joke.Punchline</p>
-                <p>Average Rating: @joke.Ratings.Average(r => r.Rating) (Total Ratings: @joke.Ratings.Count)</p>
-            </li>
-        }
-    </ul>
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-responsive">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Joke</th>
+                        <th>Average Rating</th>
+                        <th>Number of Ratings</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var joke in topJokes)
+                    {
+                        <li>
+                            <p>@joke.Setup</p>
+                            <p>@joke.Punchline</p>
+                            <p>Average Rating: @joke.Ratings.Average(r => r.Rating) (Total Ratings: @joke.Ratings.Count)</p>
+                        </li>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 }
 
 @code {
