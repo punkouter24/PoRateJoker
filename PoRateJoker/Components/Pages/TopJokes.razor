@@ -1,0 +1,37 @@
+﻿@page "/top-jokes"
+@using PoRateJoker.Models
+@using PoRateJoker.Services
+@inject JokeService JokeService
+
+<h1>Top Jokes</h1>
+
+@if (topJokes == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (topJokes.Count == 0)
+{
+    <p>No jokes to display.</p>
+}
+else
+{
+    <ul>
+        @foreach (var joke in topJokes)
+        {
+            <li>
+                <p>@joke.Setup</p>
+                <p>@joke.Punchline</p>
+                <p>Average Rating: @joke.Ratings.Average(r => r.Rating) (Total Ratings: @joke.Ratings.Count)</p>
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    private List<Joke> topJokes;
+
+    protected override async Task OnInitializedAsync()
+    {
+        topJokes = await JokeService.GetTopJokesAsync(10);
+    }
+}

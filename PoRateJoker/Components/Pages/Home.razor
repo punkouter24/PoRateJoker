@@ -1,0 +1,84 @@
+﻿@page "/"
+@using PoRateJoker.Models
+@using PoRateJoker.Services
+@inject HttpClient Http
+@inject RatingService RatingService
+@inject NavigationManager NavigationManager
+
+
+<h1>Random Joke</h1>
+
+@if (joke == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div>
+        <p>@joke.Setup</p>
+        <p>@joke.Punchline</p>
+        <input type="number" min="1" max="10" @bind="rating" @oninput="ValidateRating" />
+        <button @onclick="RateJoke" disabled="@(!IsValidRating)">Rate Joke</button>
+    </div>
+}
+
+@if (errorOccurred)
+{
+    <p>An error occurred while fetching jokes.</p>
+}
+else
+{
+    <!-- Joke display logic -->
+}
+
+@code {
+    private Joke joke;
+    private int rating;
+    private bool errorOccurred = false;
+    private bool IsValidRating = true;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchNewJoke();
+    }
+
+    private async Task FetchNewJoke()
+    {
+        try
+        {
+            joke = await Http.GetFromJsonAsync<Joke>("https://official-joke-api.appspot.com/random_joke");
+        }
+        catch (Exception ex)
+        {
+            errorOccurred = true;
+        }
+    }
+
+    private void ValidateRating(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value.ToString(), out int newRating))
+        {
+            IsValidRating = newRating >= 1 && newRating <= 10;
+        }
+        else
+        {
+            IsValidRating = false;
+        }
+    }
+
+    private async Task RateJoke()
+    {
+        if (IsValidRating)
+        {
+            var jokeRating = new JokeRating
+                {
+                    JokeId = joke.Id,
+                    Rating = rating
+                };
+
+            await RatingService.SaveJokeAndRatingAsync(joke, jokeRating);
+            await FetchNewJoke(); // Fetch a new joke after rating
+        }
+    }
+}
