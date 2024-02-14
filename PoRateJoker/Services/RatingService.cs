@@ -15,18 +15,19 @@ namespace PoRateJoker.Services
         public async Task SaveJokeAndRatingAsync(Joke joke, JokeRating rating)
         {
             // Check if the joke already exists
-            var existingJoke = await _context.Jokes.FirstOrDefaultAsync(j => j.Id == joke.Id);
+            Joke? existingJoke = await _context.Jokes.FirstOrDefaultAsync(j => j.Id == joke.Id);
+
             if (existingJoke == null)
             {
                 // Insert the joke if it does not exist
-                _context.Jokes.Add(joke);
+                _ = _context.Jokes.Add(joke);
             }
 
             // Add the rating
-            _context.JokeRatings.Add(rating);
+            _ = _context.JokeRatings.Add(rating);
 
             // Save changes
-            await _context.SaveChangesAsync();
+            _ = await _context.SaveChangesAsync();
         }
     }
 

@@ -3,6 +3,48 @@
 @using PoRateJoker.Services
 @inject JokeService JokeService
 
+<style>
+    .text-center {
+        text-align: center;
+    }
+
+    .spinner-border {
+        display: inline-block;
+        width: 2rem;
+        height: 2rem;
+        vertical-align: text-bottom;
+        border: 0.25em solid currentColor;
+        border-right-color: transparent;
+        border-radius: 50%;
+        animation: spinner-border .75s linear infinite;
+    }
+
+    .card {
+        margin: 20px 0;
+        padding: 15px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0,0,0,.1);
+    }
+
+    .table {
+        width: 100%;
+        margin-bottom: 1rem;
+        color: #212529;
+    }
+
+    .table-responsive {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .thead-light th {
+        color: #495057;
+        background-color: #e9ecef;
+        border-color: #dee2e6;
+    }
+</style>
+
 <h1>Top Jokes</h1>
 
 @if (topJokes == null)
@@ -31,11 +73,11 @@ else
                 <tbody>
                     @foreach (var joke in topJokes)
                     {
-                        <li>
-                            <p>@joke.Setup</p>
-                            <p>@joke.Punchline</p>
-                            <p>Average Rating: @joke.Ratings.Average(r => r.Rating) (Total Ratings: @joke.Ratings.Count)</p>
-                        </li>
+                        <tr>
+                            <td>@joke.Setup <br> @joke.Punchline</td>
+                            <td>@joke.Ratings.Average(r => r.Rating).ToString("0.0")</td>
+                            <td>@joke.Ratings.Count</td>
+                        </tr>
                     }
                 </tbody>
             </table>
@@ -44,7 +86,7 @@ else
 }
 
 @code {
-    private List<Joke> topJokes;
+    private List<Joke>? topJokes;
 
     protected override async Task OnInitializedAsync()
     {

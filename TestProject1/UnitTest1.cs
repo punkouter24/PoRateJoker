@@ -1,4 +1,3 @@
-using Bunit;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using PoRateJoker;
@@ -25,21 +24,5 @@ namespace TestProject1
             // Assert
             Assert.Equal(10, jokes.Count);
         }
-
-        //[Fact]
-        //public void JokeDisplay_ShowsJokeContent()
-        //{
-        //    // Arrange
-        //    using var ctx = new TestContext();
-        //    Joke joke = new() { Setup = "Joke setup", Punchline = "Joke punchline" };
-
-        //    // Act
-        //    var cut = ctx.RenderComponent<JokeDisplay>(parameters => parameters
-        //      .Add(p => p.Joke, joke)
-        //    );
-
-        //    // Assert
-        //    cut.MarkupMatches("<div><p>Joke setup</p><p>Joke punchline</p></div>");
-        //}
     }
 }

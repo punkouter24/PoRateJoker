@@ -6,6 +6,49 @@
 @inject NavigationManager NavigationManager
 
 
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    h1 {
+        color: #333;
+    }
+
+    .joke-container {
+        margin: 20px 0;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+
+    .joke-setup, .joke-punchline {
+        margin: 10px 0;
+    }
+
+    button {
+        margin-top: 10px;
+        padding: 5px 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        button:disabled {
+            background-color: #ccc;
+        }
+
+    input[type="number"] {
+        padding: 5px;
+        margin-right: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+</style>
+
 <h1>Random Joke</h1>
 
 @if (joke == null)
@@ -14,10 +57,10 @@
 }
 else
 {
-    <div>
-        <p>@joke.Setup</p>
-        <p>@joke.Punchline</p>
-        <input type="number" min="1" max="10" @bind="rating" @oninput="ValidateRating" />
+    <div class="joke-container">
+        <p class="joke-setup">@joke.Setup</p>
+        <p class="joke-punchline">@joke.Punchline</p>
+        <input type="number" min="0" max="10" @bind="rating" @oninput="ValidateRating" />
         <button @onclick="RateJoke" disabled="@(!IsValidRating)">Rate Joke</button>
     </div>
 }
@@ -28,15 +71,14 @@ else
 }
 else
 {
-    <!-- Joke display logic -->
+    <!-- Joke display logic remains unchanged -->
 }
 
 @code {
-    private Joke joke;
+    private Joke? joke;
     private int rating;
     private bool errorOccurred = false;
     private bool IsValidRating = true;
-
 
     protected override async Task OnInitializedAsync()
     {
@@ -49,7 +91,7 @@ else
         {
             joke = await Http.GetFromJsonAsync<Joke>("https://official-joke-api.appspot.com/random_joke");
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             errorOccurred = true;
         }
@@ -57,9 +99,9 @@ else
 
     private void ValidateRating(ChangeEventArgs e)
     {
-        if (int.TryParse(e.Value.ToString(), out int newRating))
+        if (e.Value?.ToString() is string value && int.TryParse(value, out int newRating))
         {
-            IsValidRating = newRating >= 1 && newRating <= 10;
+            IsValidRating = newRating >= 0 && newRating <= 10; // Updated range to 0-10
         }
         else
         {
@@ -69,7 +111,7 @@ else
 
     private async Task RateJoke()
     {
-        if (IsValidRating)
+        if (IsValidRating && joke != null) // Ensuring joke is not null before proceeding
         {
             var jokeRating = new JokeRating
                 {
